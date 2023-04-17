@@ -1,0 +1,36 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: copy nginx config for chiio
+  copy:
+    src: /ansible/assets/chiio.nginx
+    dest: /etc/nginx/sites-available/chiio.nginx
+
+- name: Create symbolic link for chiio enable
+  file:
+    src: /etc/nginx/sites-available/chiio.nginx
+    dest: /etc/nginx/sites-enabled/chiio
+    state: link
+
+- name: Remove default site config
+  file:
+    path: /etc/nginx/sites-available/default
+    state: absent
+
+- name: Remove default site enable link
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Remove default test page
+  file:
+    path: /var/www/html/index.nginx-debian.html
+    state: absent
+
+- name: Reload service nginx
+  service:
+    name: nginx
+    state: reloaded
